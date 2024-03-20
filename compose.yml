@@ -1,0 +1,36 @@
+services:
+  web:
+    build: .
+    ports:
+      - "${APP_PORT}:${APP_PORT}"
+    env_file:
+      - .env
+    depends_on:
+      rmq:
+        condition: service_healthy
+    links:
+      - "rmq"
+      - "mongodb"
+  mongodb:
+    image: mongo:7
+    ports:
+      - "27017:27017"
+    env_file:
+      - .env
+    environment:
+      - "MONGO_INITDB_ROOT_USERNAME=${MONGODB_USERNAME}"
+      - "MONGO_INITDB_ROOT_PASSWORD=${MONGODB_PASSWORD}"
+  rmq:
+    image: rabbitmq:3
+    ports:
+      - "5672:5672"
+    env_file:
+      - .env
+    environment:
+      - "RABBITMQ_DEFAULT_USER=${RABBITMQ_USERNAME}"
+      - "RABBITMQ_DEFAULT_PASS=${RABBITMQ_PASSWORD}"
+    healthcheck:
+      test: ["CMD", "rabbitmqctl", "status"]
+      interval: 5s
+      timeout: 15s
+      retries: 3
