@@ -14,6 +14,12 @@ export class FileController {
     })
   )
   async uploadFile (@UploadedFile() file: Express.Multer.File): Promise<void> {
-    await this.fileService.sendProcessingRequest(file)
+    const processingComplete = await this.fileService.sendProcessingRequest(file)
+
+    if (processingComplete) {
+      console.log('Processing complete')
+    } else {
+      console.error('Processing failed')
+    }
   }
 }

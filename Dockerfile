@@ -21,5 +21,5 @@ RUN npm ci && \
 
 COPY --from=build /tmp/build/dist ./
 
-EXPOSE 3000
+EXPOSE ${APP_PORT}
 CMD ["node", "main.js"]
